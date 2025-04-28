@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mission MEA – Multi-Level Planning Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #f0f0f0, #d0f4ff);
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #2b7a78;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .state-box, .action-box, .quiz-box {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: #e6f9ff;
+      border-radius: 8px;
+      text-align: left;
+    }
+    button {
+      background-color: #3aafa9;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 0.5rem;
+    }
+    button:hover {
+      background-color: #2b7a78;
+    }
+    #planList li {
+      list-style: decimal;
+      text-align: left;
+      margin: 0.3rem 0;
+    }
+    .level-buttons button {
+      background-color: #17252a;
+    }
+    #timer {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #e63946;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Mission MEA: Multi-Level Planner</h1>
+
+    <div class="level-buttons">
+      <h3>Select a Level</h3>
+      <button onclick="loadLevel(0)">Level 1: Morning Routine</button>
+      <button onclick="loadLevel(1)">Level 2: Tea for Guest</button>
+      <button onclick="loadLevel(2)">Level 3: Robot Delivery Task</button>
+    </div>
+
+    <div id="timer"></div>
+
+    <div class="state-box">
+      <h3>Initial State</h3>
+      <p id="initialState">Select a level to begin</p>
+    </div>
+
+    <div class="state-box">
+      <h3>Goal State</h3>
+      <p id="goalState">Select a level to begin</p>
+    </div>
+
+    <div class="action-box">
+      <h3>Available Actions (Click to Add to Plan)</h3>
+      <div id="actions"></div>
+    </div>
+
+    <h3>📝 Your MEA Plan</h3>
+    <ul id="planList"></ul>
+    <button onclick="resetPlan()">🔄 Reset Plan</button>
+    <button onclick="submitPlan()">✅ Submit Plan</button>
+
+    <h3 id="result"></h3>
+
+    <div class="quiz-box">
+      <h3>🧠 Quick Quiz on MEA</h3>
+      <div id="quizQuestion"></div>
+      <div id="quizOptions"></div>
+      <p id="quizTimer"></p>
+      <p id="quizFeedback"></p>
+      <button onclick="nextQuizQuestion()">Next Question</button>
+    </div>
+  </div>
+
+  <script>
+    const levels = [
+      {
+        timeLimit: 90,
+        initial: "At Home, in Pajamas, No Bag",
+        goal: "In Class, with Bag and Laptop Open",
+        actions: [
+          "Wake Up → Awake",
+          "Get Dressed → Wearing Clothes",
+          "Pack Bag → Bag Packed",
+          "Walk to Bus Stop → At Bus Stop",
+          "Take Bus → At College",
+          "Walk to Class → At Classroom",
+          "Enter Classroom → In Class",
+          "Open Laptop → Ready to Learn"
+        ],
+        correctPlan: [
+          "Wake Up → Awake",
+          "Get Dressed → Wearing Clothes",
+          "Pack Bag → Bag Packed",
+          "Walk to Bus Stop → At Bus Stop",
+          "Take Bus → At College",
+          "Walk to Class → At Classroom",
+          "Enter Classroom → In Class",
+          "Open Laptop → Ready to Learn"
+        ]
+      },
+      {
+        timeLimit: 75,
+        initial: "Kitchen with Ingredients",
+        goal: "Serve Tea to Guest",
+        actions: [
+          "Boil Water → Hot Water",
+          "Add Tea Leaves → Tea Mixture",
+          "Pour Tea → Tea in Cup",
+          "Serve Tea → Guest has Tea",
+          "Add Milk → Milk Tea",
+          "Add Sugar → Sweet Tea",
+          "Stir Tea → Tea Mixed"
+        ],
+        correctPlan: [
+          "Boil Water → Hot Water",
+          "Add Tea Leaves → Tea Mixture",
+          "Add Milk → Milk Tea",
+          "Add Sugar → Sweet Tea",
+          "Stir Tea → Tea Mixed",
+          "Pour Tea → Tea in Cup",
+          "Serve Tea → Guest has Tea"
+        ]
+      },
+      {
+        timeLimit: 60,
+        initial: "Robot at Dock with Package",
+        goal: "Package Delivered at Room 101",
+        actions: [
+          "Activate Robot → Robot On",
+          "Scan Delivery Map → Map Ready",
+          "Navigate Hallway → At Room Door",
+          "Ring Bell → Alert Given",
+          "Drop Package → Package Delivered",
+          "Capture Photo → Delivery Confirmed"
+        ],
+        correctPlan: [
+          "Activate Robot → Robot On",
+          "Scan Delivery Map → Map Ready",
+          "Navigate Hallway → At Room Door",
+          "Ring Bell → Alert Given",
+          "Drop Package → Package Delivered",
+          "Capture Photo → Delivery Confirmed"
+        ]
+      }
+    ];
+
+    const quizQuestions = [
+      {
+        question: "What is the main goal of Means-Ends Analysis?",
+        options: ["To memorize facts", "To minimize effort", "To reduce the difference between current and goal state", "To evaluate data"],
+        answer: 2
+      },
+      {
+        question: "Which of the following best describes an operator in MEA?",
+        options: ["A machine", "A step that changes the state", "A programming function", "A problem"],
+        answer: 1
+      },
+      {
+        question: "What kind of search does MEA use?",
+        options: ["Only forward", "Only backward", "A mix of forward and backward", "Random search"],
+        answer: 2
+      }
+    ];
+
+    let currentLevel = null;
+    let timerInterval = null;
+    let quizIndex = 0;
+    let quizTimer = null;
+    let quizTime = 15;
+    let timeRemaining = 0;
+    const planList = [];
+
+    function loadLevel(index) {
+      currentLevel = levels[index];
+      planList.length = 0;
+      renderPlan();
+
+      document.getElementById("initialState").innerText = currentLevel.initial;
+      document.getElementById("goalState").innerText = currentLevel.goal;
+      document.getElementById("actions").innerHTML = "";
+
+      currentLevel.actions.forEach(action => {
+        const btn = document.createElement("button");
+        btn.innerText = action;
+        btn.onclick = () => addToPlan(action);
+        document.getElementById("actions").appendChild(btn);
+      });
+
+      document.getElementById("result").innerText = "";
+      startTimer(currentLevel.timeLimit);
+      loadQuizQuestion();
+    }
+
+    function addToPlan(action) {
+      if (!planList.includes(action)) {
+        planList.push(action);
+        renderPlan();
+      }
+    }
+
+    function renderPlan() {
+      const planListEl = document.getElementById("planList");
+      planListEl.innerHTML = "";
+      planList.forEach(step => {
+        const li = document.createElement("li");
+        li.innerText = step;
+        planListEl.appendChild(li);
+      });
+    }
+
+    function resetPlan() {
+      planList.length = 0;
+      renderPlan();
+      document.getElementById("result").innerText = "";
+    }
+
+    function submitPlan() {
+      if (!currentLevel) {
+        alert("Please select a level first.");
+        return;
+      }
+      clearInterval(timerInterval);
+      const isCorrect = planList.length === currentLevel.correctPlan.length &&
+        planList.every((v, i) => v === currentLevel.correctPlan[i]);
+      document.getElementById("result").innerText = isCorrect
+        ? "🎉 Success! You completed the plan using MEA!"
+        : "❌ Try Again! Check your steps or order.";
+    }
+
+    function startTimer(seconds) {
+      timeRemaining = seconds;
+      clearInterval(timerInterval);
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById("result").innerText = "⏰ Time's up! Try the level again.";
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      document.getElementById("timer").innerText = `⏳ Time Remaining: ${timeRemaining}s`;
+    }
+
+    function loadQuizQuestion() {
+      if (quizIndex >= quizQuestions.length) return;
+
+      const questionObj = quizQuestions[quizIndex];
+      document.getElementById("quizQuestion").innerText = questionObj.question;
+
+      const optionsHTML = questionObj.options.map((opt, i) => `
+        <button onclick="checkQuizAnswer(${i})">${opt}</button>
+      `).join("");
+
+      document.getElementById("quizOptions").innerHTML = optionsHTML;
+      document.getElementById("quizFeedback").innerText = "";
+      startQuizTimer();
+    }
+
+    function startQuizTimer() {
+      clearInterval(quizTimer);
+      quizTime = 15;
+      document.getElementById("quizTimer").innerText = `⏱️ Time left: ${quizTime}s`;
+      quizTimer = setInterval(() => {
+        quizTime--;
+        document.getElementById("quizTimer").innerText = `⏱️ Time left: ${quizTime}s`;
+        if (quizTime <= 0) {
+          clearInterval(quizTimer);
+          document.getElementById("quizFeedback").innerText = "⏰ Time's up!";
+        }
+      }, 1000);
+    }
+
+    function checkQuizAnswer(selectedIndex) {
+      clearInterval(quizTimer);
+      const correct = quizQuestions[quizIndex].answer;
+      document.getElementById("quizFeedback").innerText =
+        selectedIndex === correct ? "✅ Correct!" : "❌ Incorrect.";
+    }
+
+    function nextQuizQuestion() {
+      quizIndex++;
+      loadQuizQuestion();
+    }
+  </script>
+</body>
+</html>
