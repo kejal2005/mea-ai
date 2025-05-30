@@ -8,8 +8,7 @@
 
 ## 🔗 Live Demo
 
-👉 [Click here to try the game online](https://yourusername.github.io/mission-mea/)  
-*Replace this link with your actual GitHub Pages deployment URL.*
+👉 [Click here to try the game online](https://kejal2005.github.io/mea-ai/)
 
 ---
 
@@ -54,8 +53,8 @@ Means-Ends Analysis (MEA) is an artificial intelligence strategy that breaks dow
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/mission-mea.git
-cd mission-mea
+git clone https://github.com/kejal2005/mea-ai.git
+cd mea-ai
 ```
 
 ### 2. Run the Game
@@ -81,7 +80,7 @@ Open the `index.htm` file in any modern web browser.
 
 ## 🙌 Acknowledgments
 
-This project was developed by [Your Name] as part of an AI educational initiative/presentation. It is inspired by the Means-Ends Analysis problem-solving technique in Artificial Intelligence.
+This project was developed by Kejal as part of an AI educational initiative/presentation. It is inspired by the Means-Ends Analysis problem-solving technique in Artificial Intelligence.
 
 ---
 
