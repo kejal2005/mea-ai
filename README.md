@@ -6,6 +6,13 @@
 
 ---
 
+## 🔗 Live Demo
+
+👉 [Click here to try the game online](https://yourusername.github.io/mission-mea/)  
+*Replace this link with your actual GitHub Pages deployment URL.*
+
+---
+
 ## 🎯 Features
 
 - 🧩 **Multi-Level Gameplay**: Three unique levels simulating real-world scenarios:
