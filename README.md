@@ -14,7 +14,7 @@
 
 ## 🎯 Features
 
-- 🧩 **Multi-Level Gameplay**: Three unique levels simulating real-world scenarios:
+- 🧩 **Multi-Level Gameplay**: Three unique levels simulating real-world scenarios :
   - Morning Routine
   - Tea Preparation
   - Robot Delivery
