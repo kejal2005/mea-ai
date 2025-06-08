@@ -1,6 +1,6 @@
 # 🚀 Mission MEA – Multi-Level Planning Game
 
-**Mission MEA** is an interactive web-based educational game designed to demonstrate the concept of **Means-Ends Analysis (MEA)** — a fundamental AI problem-solving technique. The game enables users to plan a series of actions to transition from an initial state to a goal state using logical reasoning, supported by a built-in quiz to reinforce learning.
+**Mission MEA** is an interactive web-based educational game designed to demonstrate the concept of **Means-Ends Analysis (MEA)** — a fundamental AI problem-solving technique. The game enables users to plan a series of actions to transition from an initial state to a goal state using logical reasoning, supported by a built-in quiz to reinforce learning..
 
 <!--![Screenshot](screenshot.png)  Replace with an actual screenshot if available -->
 
